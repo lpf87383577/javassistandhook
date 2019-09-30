@@ -1,0 +1,1 @@
+include ':hook', ':testplugin', ':buildSrc', ':plugin', ':testjavassist'

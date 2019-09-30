@@ -1,0 +1,30 @@
+apply plugin: 'groovy'
+
+
+dependencies {
+    compile gradleApi() //gradle sdk
+    compile localGroovy() //groovy sdk
+    //compile 'com.android.tools.build:gradle:3.4.1'
+    compile 'org.javassist:javassist:3.20.0-GA'
+}
+
+repositories {
+    jcenter()
+}
+
+//group和version在后面使用自定义插件的时候会用到
+group='com.lpf.plugin'
+version='1.0.0'
+//将plugin提交到本地服务器
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            //提交到远程服务器：
+//            // repository(url: "http://www.xxx.com/repos") {
+//            //    authentication(userName: "admin", password: "admin")
+//            // }
+//            //本地的Maven地址设置为D:/maven_repos
+//            //repository(url: uri('D:/maven_repos'))
+//        }
+//    }
+//}

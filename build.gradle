@@ -18,11 +18,26 @@ buildscript {
     }
 }
 
+//allprojects是对所有project的配置，包括Root Project。
 allprojects {
     repositories {
         google()
         jcenter()
         
+    }
+}
+
+//而subprojects是对所有Child Project的配置
+subprojects{ sub ->
+
+    sub.beforeEvaluate{ project ->
+
+        //根据项目名执行打印
+        if (sub.getName().equals("buildSrc")){
+
+            println "子项目beforeEvaluate回调"
+        }
+
     }
 }
 

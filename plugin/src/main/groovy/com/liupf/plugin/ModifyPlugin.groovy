@@ -11,6 +11,7 @@ class ModifyPlugin implements Plugin<Project> {
         println "this is my custom plugin ModifyPlugin"
 
         project.android.registerTransform(new ModifyTransform(project))
+
     }
 
 }

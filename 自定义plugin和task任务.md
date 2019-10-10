@@ -57,6 +57,31 @@ Last action
 ```
 task 写好后可以在gradle-->Tasks-->other 中看到这个自己写的task
 
+- 任务依赖
+```
+//先执行t3在执行t5
+task t5(dependsOn: t3) {
+    doLast {
+        println 'world'
+    }
+}
+```
+
+- Project和Task允许添加额外自定义属性，通过对应的ext属性即可
+```
+//自定义多个属性
+ext {
+    buildTime = '2018'
+    month = '12'
+}
+
+task t3 {
+    doLast {
+        print "构建时间${buildTime} 年${month}月 \n"
+    }
+}
+```
+
 
 ## 自定义plugin
 
@@ -82,9 +107,17 @@ class Myplugin implements Plugin<Project> {
         //返回的值是一个ExtensionDemo类的实例，里面属性就是用户定义的hencoder的参数
         def extension = target.extensions.create('hencoder',ExtensionDemo)
 
+        //在所有build.gradle解析完成后执行方法afterEvaluate
         target.afterEvaluate {
-            println "hellow ${extension.name}"
+            println "afterEvaluate ${extension.name}"
         }
+        
+        //在解析setting.gradle之后，开始解析build.gradle之前执行beforeEvaluate，如果此plugin apply在
+        //module的build.gradle里面beforeEvaluate不会被执行
+        target.beforeEvaluate {
+            println "beforeEvaluate ${extension.name}"
+        }
+        
     }
 }
 

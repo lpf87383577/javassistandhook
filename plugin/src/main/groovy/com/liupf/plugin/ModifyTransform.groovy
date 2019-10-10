@@ -87,7 +87,6 @@ class ModifyTransform extends Transform {
                 FileUtils.copyFile(it.file, dest)
             }
 
-
             it.directoryInputs.each {
                 def preFileName = it.file.absolutePath
                 pool.insertClassPath(preFileName)

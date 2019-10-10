@@ -1,3 +1,4 @@
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'com.lpf.plugin'
@@ -10,8 +11,16 @@ class Myplugin implements Plugin<Project> {
         //返回的值是一个ExtensionDemo类的实例，里面属性就是用户定义的hencoder的参数
         def extension = target.extensions.create('hencoder',ExtensionDemo)
 
+        //在所有build.gradle解析完成后，开始执行task之前，此时所有的脚本已经解析完成，task，plugins等所有信息可以获取，
+        // task的依赖关系也已经生成，如果此时需要做一些事情，可以写在afterEvaluate
         target.afterEvaluate {
-            println "hellow ${extension.name}"
+            println "afterEvaluate ${extension.name}"
+        }
+
+        //在解析setting.gradle之后，开始解析build.gradle之前执行beforeEvaluate，如果此plugin apply在
+        //build.gradle里面beforeEvaluate不会被执行
+        target.beforeEvaluate {
+            println "beforeEvaluate ${extension.name}"
         }
     }
 }
@@ -63,6 +72,78 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+//TaskContainer方式创建task
+tasks.create('t4') {
+    description '任务描述'
+    doLast {
+        print "方法原型： Task create(String name, Closure configureClosure)\n"
+        print "任务描述： ${description}"
+    }
+}
+
+
+static def mMethod(int a, int b) {
+    println a+b
+}
+
+task t1{
+    //下面两种方式结果是一样的
+    mMethod(2, 3)
+    mMethod 2, 3
+}
+
+//多个参数
+static def customClosure(closure) {
+    def myMap = ['name': 'mq', 'country': 'china']
+    myMap.each {
+        //闭包中有两个参数
+        closure(it.key, it.value)
+    }
+}
+
+task t2{
+
+    def myList = [1, 2, 3, 4, 5]
+
+    //第一种：方法中传入代码块{}
+    myList.each({ println it })
+
+    //第二种：Groovy规定，如果方法最后一个参数是闭包，可以放到方法外面
+    myList.each() { println it }
+
+    //第三种：方法括号可以省略，就变成我们最常见的形式了
+    myList.each {
+        println it
+    }
+
+    customClosure {
+            //声明多个参数 对应闭包中的key和value
+        k, v ->
+            println "${k} is ${v}"
+    }
+
+}
+
+//自定义多个属性
+ext {
+    buildTime = '2018'
+    month = '12'
+}
+
+task t3 {
+    doLast {
+        print "构建时间${buildTime} 年${month}月 \n"
+    }
+}
+
+//任务依赖
+// 先执行t3在执行t5
+task t5(dependsOn: t3) {
+    doLast {
+        println 'world'
+    }
 }
 
 println "hello world11111"
